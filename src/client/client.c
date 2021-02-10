@@ -153,7 +153,6 @@ int main(int argc, char* argv[])
     if(pid == 0)
     {
         //子进程：调用解码器，而解码器只能调用标准输入来的内容
-Unable to exec gcc.real: No such file or directory
         close(sd);                            //子进程不需要用到解码器，只需要从管道的读端读取数据就行
         close(pd[1]);                         //关闭自身暂时不需要使用的写的pd[1]
         dup2(pd[0],0);                        //将管道的读端重定向到标准输入的位置
