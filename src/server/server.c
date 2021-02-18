@@ -41,7 +41,7 @@ static void daemon_exit(int s)
     exit(0);
 }
 
-static daemonize(void)
+static int daemonize(void)
 {
     pid_t pid;
     int fd;
@@ -81,6 +81,37 @@ static daemonize(void)
     umask(0);
     return 0;
 }
+
+
+static void socket_init(void)
+{
+    int serversd;
+    struct ip_mreqn mreq;
+
+    serversd = socket(AF_INET,SOCK_DGRAM,0);
+    if(serversd < 0)
+    {
+        syslog(LOG_ERR,"socket():%s",strerror(errno));
+        exit(1);
+    }
+
+    %属性的设置
+    inet_pton(AF_INET,server_conf.mgroup,&mreq.imr_multiaddr);
+    inet_pton(AF_INET,"0.0.0.0",&mreq.imr_address);
+    mreq.imr_ifindex = if_nametoindex(server_conf.ifname);//网络摄本报索引号
+
+    if(setsockopt(serversd,IPPROTO_IP,IP_MULTICAST_IF,&mreq,sizeof(mreq))<0)
+    {
+        syslog(LOG_ERR,"setsockopt(IP_MULTICAST_IF):%s",strerror(errno));
+        exit(1);
+    }
+
+    //bind();
+    
+
+
+}
+
 
 int main(int argc, char** argv)
 {
@@ -155,16 +186,35 @@ int main(int argc, char** argv)
     }
 
     /*SOCKET初始化*/
+    socket_init();
 
     /*获取频道信息*/
+    struct mlib_listentry_st * list;
+    int list_size;
+    int err;
 
+    err =  mlib_getchnlist(&list,&list_size);
+    if()
+    {
+        
+    }
+        
     /*创建节目单线程*/
+    thr_list_create(list,,list_size);
+    /*if error*/
 
     /*创建频道线程*/
+    for(i = 0; i< list_size;i++)
+    {
+        thr_channel_create(list+i);
+        /*if error*/
+    }
+
+    syslog(LOG_DEBUG,"%d channel threads created.",i);
+
 
     while(1)
         pause();
-
 
     exit(0);
 }
