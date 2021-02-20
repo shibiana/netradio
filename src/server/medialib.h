@@ -13,5 +13,4 @@ int mlib_getchnlist(struct mlib_listentry_st** , int *);
 int mlib_freechnlist(struct mlib_listentry_st*);
 
 ssize_t mlib_readchn(chnid_t, void*, size_t);
-
 #endif
